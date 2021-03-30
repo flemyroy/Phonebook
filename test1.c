@@ -9,16 +9,19 @@ struct contact_managment {
     char primary_contact[10];
     char sec_contact[10];
 } ;
+
 struct contact_managment c[100];
 
+//Creating a File
 void getdata(int n)
 {
     FILE *f;
-    f=fopen("test.bin","wb");
+    f=fopen("test.bin","a");
+
     if (f==NULL)
     {
      printf("File does not exist");
-     exit(0);
+     exit(1);// Program exits if the file pointer returns NULL.
     }
     for(int i=0; i<n ;i++)
     {
@@ -32,27 +35,29 @@ void getdata(int n)
      scanf("%s",&c[i].primary_contact);
      printf("Secondary Contact Number:");
      scanf("%s",&c[i].sec_contact );
-     fwrite (&c[i], sizeof(c[i]), 1, f); 
+     fwrite (&c[i], sizeof(c[i]),1,f); 
     }
     if(fwrite != 0)  
         printf("File written successfully !\n"); 
     else 
-        printf("Error writing file !\n"); 
+        printf("Error in writing file !\n"); 
   
     fclose (f); 
 }
 
+
+//Reading from a file
 void showdata(int n)
 {   
     FILE *fptr;
 
-   if ((fptr = fopen("test.bin","rb")) == NULL){
-       printf("Error! opening file");
+   if ((fptr = fopen("test.bin","r")) == NULL){
+       printf("Error! File does not exist");
 
        // Program exits if the file pointer returns NULL.
        exit(1);
    }
-
+     
    for(int i = 0; i<n; i++)
    {
      fread(&c, sizeof(c), 1, fptr); 
@@ -60,42 +65,46 @@ void showdata(int n)
      printf("\nLast Name: %s",&c[i].lname);
      printf("\nEmail: %s",&c[i].email);
      printf("\nPrimary Contact Number: %s",&c[i].primary_contact);
-     printf("\nSecondary Contact Number: %s:",&c[i].sec_contact);
+     printf("\nSecondary Contact Number: %s",&c[i].sec_contact);
      printf("\n");
     }
     
     fclose(fptr);
 }
 
+//Searching from a file
 int search(char fname[50])
 {
  FILE *fptr;
- int i=0;
- if ((fptr = fopen("test.bin","rb")) == NULL)
-   {
-     printf("Error! opening file");
-     // Program exits if the file pointer returns NULL.
-     exit(1);
-   }
 
-   while(fread(&c, sizeof(c), 1, fptr) )
-   {
-        if(fname==c[i].fname)
-        {
-         printf("\nFirst Name: %s",&c[i].fname);
-         printf("\nLast Name: %s",&c[i].lname);
-         printf("\nEmail: %s",&c[i].email);
-         printf("\nPrimary Contact Number: %s",&c[i].primary_contact);
-         printf("\nSecondary Contact Number: %s:",&c[i].sec_contact);
-         printf("\n");
-        }
-        fread(&c, sizeof(c), 1, fptr);
-        i++;
+   if ((fptr = fopen("test.bin","rb")) == NULL){
+       printf("Error! File does not exist");
+
+       // Program exits if the file pointer returns NULL.
+       exit(1);
    }
+   int n;
+   n=sizeof(&c);
+    for(int i = 0; i<n; i++)
+   {
+     fread(&c, sizeof(c), 1, fptr); 
+     if (strcmpi(fname, c[i].fname)==0)
+     {
+      printf("\nFirst Name: %s",&c[i].fname);
+      printf("\nLast Name: %s",&c[i].lname);
+      printf("\nEmail: %s",&c[i].email);
+      printf("\nPrimary Contact Number: %s",&c[i].primary_contact);
+      printf("\nSecondary Contact Number: %s:",&c[i].sec_contact);
+      printf("\n");
+     }
+     
+    }
+    
+    fclose(fptr);
 }
 int main()
 {
-    
+    printf("%d",sizeof(&c));
    int n,i,number;
    char option, fname[50];
    do
